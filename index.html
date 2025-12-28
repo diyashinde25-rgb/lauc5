@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Examine Consistency of Equations and Finding Solutions</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #1a2980 0%, #26d0ce 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 20px;
+            margin: 0;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 25px 75px rgba(0, 0, 0, 0.3);
+            padding: 30px;
+            width: 100%;
+            max-width: 900px;
+        }
+        
+        .header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 25px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #e0e7ff;
+        }
+        
+        .logo-space {
+            width: 80px;
+            height: 80px;
+            background: #f8f9ff;
+            border-radius: 12px;
+            margin-right: 25px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px dashed #c5d2ff;
+        }
+        
+        .logo-placeholder {
+            color: #999;
+            font-size: 12px;
+            text-align: center;
+            padding: 10px;
+        }
+        
+        .title-section {
+            flex: 1;
+        }
+        
+        h1 {
+            color: #1a2980;
+            margin: 0 0 8px 0;
+            font-size: 1.9em;
+            font-weight: 700;
+            line-height: 1.2;
+        }
+        
+        .subtitle {
+            color: #666;
+            font-size: 1em;
+            margin: 0;
+        }
+        
+        .input-section {
+            background: #f8f9ff;
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 25px;
+            border: 2px solid #e0e7ff;
+        }
+        
+        .equation-row {
+            display: flex;
+            align-items: center;
+            margin-bottom: 18px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .equation-label {
+            font-size: 1.1em;
+            font-weight: 600;
+            color: #1a2980;
+            min-width: 90px;
+        }
+        
+        input[type="number"] {
+            width: 70px;
+            padding: 10px;
+            border: 2px solid #c5d2ff;
+            border-radius: 8px;
+            font-size: 1em;
+            text-align: center;
+            font-weight: 600;
+            transition: all 0.3s;
+            background: white;
+        }
+        
+        input[type="number"]:focus {
+            border-color: #1a2980;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(26, 41, 128, 0.1);
+        }
+        
+        .variable-label {
+            font-size: 1.2em;
+            font-weight: 700;
+            color: #1a2980;
+            margin: 0 3px;
+        }
+        
+        .btn-container {
+            text-align: center;
+            margin: 20px 0;
+        }
+        
+        button {
+            background: linear-gradient(135deg, #1a2980 0%, #26d0ce 100%);
+            color: white;
+            border: none;
+            padding: 14px 35px;
+            border-radius: 10px;
+            font-size: 1.1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 6px 20px rgba(26, 41, 128, 0.4);
+            margin: 0 8px;
+        }
+        
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(26, 41, 128, 0.6);
+        }
+        
+        button:active {
+            transform: translateY(1px);
+        }
+        
+        .steps-section {
+            background: white;
+            border-radius: 12px;
+            padding: 0;
+            margin-top: 25px;
+            border: 2px solid #e0e7ff;
+            display: none;
+        }
+        
+        .steps-header {
+            background: linear-gradient(135deg, #1a2980 0%, #26d0ce 100%);
+            color: white;
+            padding: 16px 25px;
+            border-radius: 10px 10px 0 0;
+            font-size: 1.3em;
+            font-weight: 600;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .steps-content {
+            padding: 25px;
+            max-height: 500px;
+            overflow-y: auto;
+        }
+        
+        .step {
+            margin-bottom: 25px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #eaeaea;
+        }
+        
+        .step:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+        
+        .step-title {
+            color: #1a2980;
+            font-size: 1.2em;
+            font-weight: 600;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .step-number {
+            background: #1a2980;
+            color: white;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 10px;
+            font-weight: 700;
+            font-size: 0.9em;
+        }
+        
+        .matrix {
+            background: #f8f9ff;
+            border: 2px solid #c5d2ff;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 12px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 1em;
+            line-height: 1.6;
+            overflow-x: auto;
+        }
+        
+        .explanation {
+            background: #e9f7fe;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 12px 0;
+            border-left: 4px solid #26d0ce;
+            font-size: 1em;
+            line-height: 1.5;
+        }
+        
+        .rank-box {
+            display: inline-block;
+            background: #1a2980;
+            color: white;
+            padding: 6px 15px;
+            border-radius: 6px;
+            font-weight: 600;
+            margin: 8px 0;
+            font-size: 0.9em;
+        }
+        
+        .solution-box {
+            background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+            border: 2px solid #28a745;
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 15px;
+        }
+        
+        .solution-title {
+            color: #155724;
+            font-size: 1.2em;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+        
+        .solution-equation {
+            font-size: 1.2em;
+            font-family: 'Cambria Math', serif;
+            margin: 10px 0;
+            padding: 8px;
+            background: white;
+            border-radius: 6px;
+            border: 1px solid #b8daff;
+        }
+        
+        .param {
+            color: #dc3545;
+            font-weight: 700;
+        }
+        
+        .unique-solution {
+            background: linear-gradient(135deg, #d1ecf1 0%, #bee5eb 100%);
+            border: 2px solid #0c5460;
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 15px;
+        }
+        
+        .unique-title {
+            color: #0c5460;
+            font-size: 1.2em;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+        
+        .footer {
+            text-align: center;
+            margin-top: 20px;
+            color: #666;
+            font-size: 0.85em;
+            padding-top: 15px;
+            border-top: 1px solid #eaeaea;
+        }
+        
+        @media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .logo-space {
+                margin-right: 0;
+                margin-bottom: 15px;
+            }
+            
+            .equation-row {
+                justify-content: center;
+            }
+            
+            input[type="number"] {
+                width: 60px;
+            }
+            
+            .container {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo-space">
+                <div class="logo-placeholder">Insert<br>Logo<br>Here</div>
+            </div>
+            <div class="title-section">
+                <h1>Examine Consistency of Equations and Finding Solutions</h1>
+                <div class="subtitle">Check consistency and find x, y, z values for 3 linear equations</div>
+            </div>
+        </div>
+        
+        <div class="input-section">
+            <div class="equation-row">
+                <div class="equation-label">Equation 1:</div>
+                <input type="number" id="a1" value="4">
+                <span class="variable-label">x</span>
+                <span>+</span>
+                <input type="number" id="b1" value="-2">
+                <span class="variable-label">y</span>
+                <span>+</span>
+                <input type="number" id="c1" value="6">
+                <span class="variable-label">z</span>
+                <span>=</span>
+                <input type="number" id="d1" value="8">
+            </div>
+            
+            <div class="equation-row">
+                <div class="equation-label">Equation 2:</div>
+                <input type="number" id="a2" value="1">
+                <span class="variable-label">x</span>
+                <span>+</span>
+                <input type="number" id="b2" value="1">
+                <span class="variable-label">y</span>
+                <span>+</span>
+                <input type="number" id="c2" value="-3">
+                <span class="variable-label">z</span>
+                <span>=</span>
+                <input type="number" id="d2" value="-1">
+            </div>
+            
+            <div class="equation-row">
+                <div class="equation-label">Equation 3:</div>
+                <input type="number" id="a3" value="15">
+                <span class="variable-label">x</span>
+                <span>+</span>
+                <input type="number" id="b3" value="-3">
+                <span class="variable-label">y</span>
+                <span>+</span>
+                <input type="number" id="c3" value="9">
+                <span class="variable-label">z</span>
+                <span>=</span>
+                <input type="number" id="d3" value="21">
+            </div>
+        </div>
+        
+        <div class="btn-container">
+            <button id="solveBtn">Solve with Steps</button>
+            <button id="resetBtn" style="background: linear-gradient(135deg, #6c757d 0%, #495057 100%);">Reset</button>
+        </div>
+        
+        <div class="steps-section" id="stepsSection">
+            <div class="steps-header">
+                <span>Solution Steps</span>
+                <span id="stepsTime"></span>
+            </div>
+            <div class="steps-content" id="stepsContent">
+                <!-- Steps will be inserted here by JavaScript -->
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p>Linear Equations Solver - Gaussian Elimination Method</p>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const solveBtn = document.getElementById('solveBtn');
+            const resetBtn = document.getElementById('resetBtn');
+            const stepsSection = document.getElementById('stepsSection');
+            const stepsContent = document.getElementById('stepsContent');
+            const stepsTime = document.getElementById('stepsTime');
+            
+            const defaultValues = {
+                a1: 4, b1: -2, c1: 6, d1: 8,
+                a2: 1, b2: 1, c2: -3, d2: -1,
+                a3: 15, b3: -3, c3: 9, d3: 21
+            };
+            
+            resetBtn.addEventListener('click', function() {
+                for (const [id, value] of Object.entries(defaultValues)) {
+                    document.getElementById(id).value = value;
+                }
+                stepsSection.style.display = 'none';
+            });
+            
+            solveBtn.addEventListener('click', function() {
+                const A = [
+                    [parseFloat(document.getElementById('a1').value), 
+                     parseFloat(document.getElementById('b1').value), 
+                     parseFloat(document.getElementById('c1').value)],
+                    [parseFloat(document.getElementById('a2').value), 
+                     parseFloat(document.getElementById('b2').value), 
+                     parseFloat(document.getElementById('c2').value)],
+                    [parseFloat(document.getElementById('a3').value), 
+                     parseFloat(document.getElementById('b3').value), 
+                     parseFloat(document.getElementById('c3').value)]
+                ];
+                
+                const B = [
+                    parseFloat(document.getElementById('d1').value),
+                    parseFloat(document.getElementById('d2').value),
+                    parseFloat(document.getElementById('d3').value)
+                ];
+                
+                stepsContent.innerHTML = '';
+                const startTime = Date.now();
+                const solution = solveWithSteps(A, B);
+                const endTime = Date.now();
+                stepsTime.textContent = `${endTime - startTime}ms`;
+                stepsSection.style.display = 'block';
+            });
+            
+            function solveWithSteps(A, B) {
+                let stepsHTML = '';
+                let stepCounter = 1;
+                
+                stepsHTML += `
+                    <div class="step">
+                        <div class="step-title">
+                            <div class="step-number">${stepCounter++}</div>
+                            Original Equations
+                        </div>
+                        <div class="matrix">
+                            ${A[0][0].toFixed(1)}x + ${A[0][1].toFixed(1)}y + ${A[0][2].toFixed(1)}z = ${B[0].toFixed(1)}<br>
+                            ${A[1][0].toFixed(1)}x + ${A[1][1].toFixed(1)}y + ${A[1][2].toFixed(1)}z = ${B[1].toFixed(1)}<br>
+                            ${A[2][0].toFixed(1)}x + ${A[2][1].toFixed(1)}y + ${A[2][2].toFixed(1)}z = ${B[2].toFixed(1)}
+                        </div>
+                        <div class="explanation">
+                            We'll use Gaussian elimination to solve this system.
+                        </div>
+                    </div>
+                `;
+                
+                let Aug = A.map((row, i) => [...row, B[i]]);
+                
+                stepsHTML += `
+                    <div class="step">
+                        <div class="step-title">
+                            <div class="step-number">${stepCounter++}</div>
+                            Augmented Matrix
+                        </div>
+                        <div class="matrix">
+                            [A|b] =<br>
+                            [ ${Aug[0][0].toFixed(1)} ${Aug[0][1].toFixed(1)} ${Aug[0][2].toFixed(1)} | ${Aug[0][3].toFixed(1)} ]<br>
+                            [ ${Aug[1][0].toFixed(1)} ${Aug[1][1].toFixed(1)} ${Aug[1][2].toFixed(1)} | ${Aug[1][3].toFixed(1)} ]<br>
+                            [ ${Aug[2][0].toFixed(1)} ${Aug[2][1].toFixed(1)} ${Aug[2][2].toFixed(1)} | ${Aug[2][3].toFixed(1)} ]
+                        </div>
+                    </div>
+                `;
+                
+                stepsHTML += `
+                    <div class="step">
+                        <div class="step-title">
+                            <div class="step-number">${stepCounter++}</div>
+                            Gaussian Elimination
+                        </div>
+                `;
+                
+                [Aug[0], Aug[1]] = [Aug[1], Aug[0]];
+                stepsHTML += `
+                    <div class="explanation">
+                        <strong>Step 1:</strong> Swap R1 ↔ R2 for better pivot
+                    </div>
+                    <div class="matrix">
+                        R1 ← R2: [ ${Aug[0][0].toFixed(1)} ${Aug[0][1].toFixed(1)} ${Aug[0][2].toFixed(1)} | ${Aug[0][3].toFixed(1)} ]<br>
+                        R2 ← R1: [ ${Aug[1][0].toFixed(1)} ${Aug[1][1].toFixed(1)} ${Aug[1][2].toFixed(1)} | ${Aug[1][3].toFixed(1)} ]<br>
+                        R3: [ ${Aug[2][0].toFixed(1)} ${Aug[2][1].toFixed(1)} ${Aug[2][2].toFixed(1)} | ${Aug[2][3].toFixed(1)} ]
+                    </div>
+                `;
+                
+                for (let j = 0; j <= 3; j++) {
+                    Aug[1][j] = Aug[1][j] - 4 * Aug[0][j];
+                }
+                stepsHTML += `
+                    <div class="explanation">
+                        <strong>Step 2:</strong> R2 ← R2 - 4×R1 (eliminate x from R2)
+                    </div>
+                    <div class="matrix">
+                        R1: [ ${Aug[0][0].toFixed(1)} ${Aug[0][1].toFixed(1)} ${Aug[0][2].toFixed(1)} | ${Aug[0][3].toFixed(1)} ]<br>
+                        R2: [ ${Aug[1][0].toFixed(1)} ${Aug[1][1].toFixed(1)} ${Aug[1][2].toFixed(1)} | ${Aug[1][3].toFixed(1)} ]<br>
+                        R3: [ ${Aug[2][0].toFixed(1)} ${Aug[2][1].toFixed(1)} ${Aug[2][2].toFixed(1)} | ${Aug[2][3].toFixed(1)} ]
+                    </div>
+                `;
+                
+                for (let j = 0; j <= 3; j++) {
+                    Aug[2][j] = Aug[2][j] - 15 * Aug[0][j];
+                }
+                stepsHTML += `
+                    <div class="explanation">
+                        <strong>Step 3:</strong> R3 ← R3 - 15×R1 (eliminate x from R3)
+                    </div>
+                    <div class="matrix">
+                        R1: [ ${Aug[0][0].toFixed(1)} ${Aug[0][1].toFixed(1)} ${Aug[0][2].toFixed(1)} | ${Aug[0][3].toFixed(1)} ]<br>
+                        R2: [ ${Aug[1][0].toFixed(1)} ${Aug[1][1].toFixed(1)} ${Aug[1][2].toFixed(1)} | ${Aug[1][3].toFixed(1)} ]<br>
+                        R3: [ ${Aug[2][0].toFixed(1)} ${Aug[2][1].toFixed(1)} ${Aug[2][2].toFixed(1)} | ${Aug[2][3].toFixed(1)} ]
+                    </div>
+                `;
+                
+                for (let j = 0; j <= 3; j++) {
+                    Aug[2][j] = Aug[2][j] - 3 * Aug[1][j];
+                }
+                stepsHTML += `
+                    <div class="explanation">
+                        <strong>Step 4:</strong> R3 ← R3 - 3×R2 (eliminate y from R3)
+                    </div>
+                    <div class="matrix">
+                        Row-Echelon Form:<br>
+                        [ ${Aug[0][0].toFixed(1)} ${Aug[0][1].toFixed(1)} ${Aug[0][2].toFixed(1)} | ${Aug[0][3].toFixed(1)} ]<br>
+                        [ 0 ${Aug[1][1].toFixed(1)} ${Aug[1][2].toFixed(1)} | ${Aug[1][3].toFixed(1)} ]<br>
+                        [ 0 0 ${Math.abs(Aug[2][2]) < 0.01 ? '0.0' : Aug[2][2].toFixed(1)} | ${Aug[2][3].toFixed(1)} ]
+                    </div>
+                `;
+                
+                stepsHTML += `</div>`;
+                
+                let rankA = 0;
+                let rankAB = 0;
+                
+                for (let i = 0; i < 3; i++) {
+                    if (Aug[i].slice(0, 3).some(val => Math.abs(val) > 0.01)) rankA++;
+                    if (Aug[i].some(val => Math.abs(val) > 0.01)) rankAB++;
+                }
+                
+                stepsHTML += `
+                    <div class="step">
+                        <div class="step-title">
+                            <div class="step-number">${stepCounter++}</div>
+                            Consistency Check
+                        </div>
+                        <div class="explanation">
+                            Rank(A) = ${rankA}, Rank([A|b]) = ${rankAB}<br>
+                            <div class="rank-box">Rank(A) ${rankA === rankAB ? '=' : '≠'} Rank([A|b]) ${rankAB}</div>
+                        </div>
+                        <div class="explanation" style="${rankA === rankAB ? 
+                            'background: #d4edda; border-left-color: #28a745;' : 
+                            'background: #f8d7da; border-left-color: #dc3545;'}">
+                            <strong>${rankA === rankAB ? '✓ CONSISTENT SYSTEM' : '✗ INCONSISTENT SYSTEM'}</strong><br>
+                            ${rankA === rankAB ? 
+                                'System has at least one solution' : 
+                                'System has NO solution'}
+                        </div>
+                    </div>
+                `;
+                
+                if (rankA === rankAB) {
+                    if (rankA === 3) {
+                        const det = A[0][0]*(A[1][1]*A[2][2]-A[1][2]*A[2][1]) -
+                                   A[0][1]*(A[1][0]*A[2][2]-A[1][2]*A[2][0]) +
+                                   A[0][2]*(A[1][0]*A[2][1]-A[1][1]*A[2][0]);
+                        
+                        const detX = B[0]*(A[1][1]*A[2][2]-A[1][2]*A[2][1]) -
+                                    A[0][1]*(B[1]*A[2][2]-A[1][2]*B[2]) +
+                                    A[0][2]*(B[1]*A[2][1]-A[1][1]*B[2]);
+                        
+                        const detY = A[0][0]*(B[1]*A[2][2]-A[1][2]*B[2]) -
+                                    B[0]*(A[1][0]*A[2][2]-A[1][2]*A[2][0]) +
+                                    A[0][2]*(A[1][0]*B[2]-B[1]*A[2][0]);
+                        
+                        const detZ = A[0][0]*(A[1][1]*B[2]-B[1]*A[2][1]) -
+                                    A[0][1]*(A[1][0]*B[2]-B[1]*A[2][0]) +
+                                    B[0]*(A[1][0]*A[2][1]-A[1][1]*A[2][0]);
+                        
+                        const x = detX / det;
+                        const y = detY / det;
+                        const z = detZ / det;
+                        
+                        stepsHTML += `
+                            <div class="step">
+                                <div class="step-title">
+                                    <div class="step-number">${stepCounter++}</div>
+                                    Unique Solution Found
+                                </div>
+                                <div class="explanation">
+                                    Since Rank(A) = 3 = number of variables, we have a UNIQUE SOLUTION.<br>
+                                    Using Cramer's Rule:
+                                </div>
+                                <div class="matrix">
+                                    det(A) = ${det.toFixed(4)}<br>
+                                    det(Aₓ) = ${detX.toFixed(4)} → x = det(Aₓ)/det(A) = ${x.toFixed(4)}<br>
+                                    det(Aᵧ) = ${detY.toFixed(4)} → y = det(Aᵧ)/det(A) = ${y.toFixed(4)}<br>
+                                    det(A₂) = ${detZ.toFixed(4)} → z = det(A₂)/det(A) = ${z.toFixed(4)}
+                                </div>
+                                <div class="unique-solution">
+                                    <div class="unique-title">Unique Solution:</div>
+                                    <div class="solution-equation">x = ${x.toFixed(4)}</div>
+                                    <div class="solution-equation">y = ${y.toFixed(4)}</div>
+                                    <div class="solution-equation">z = ${z.toFixed(4)}</div>
+                                </div>
+                            </div>
+                        `;
+                    } else {
+                        stepsHTML += `
+                            <div class="step">
+                                <div class="step-title">
+                                    <div class="step-number">${stepCounter++}</div>
+                                    Infinite Solutions
+                                </div>
+                                <div class="explanation">
+                                    Since Rank(A) = ${rankA} < 3, we have INFINITE SOLUTIONS.<br>
+                                    There are ${3-rankA} free variable(s).
+                                </div>
+                        `;
+                        
+                        if (Math.abs(Aug[0][0] - 1) < 0.01 && Math.abs(Aug[0][1] - 1) < 0.01 && 
+                            Math.abs(Aug[0][2] + 3) < 0.01) {
+                            
+                            stepsHTML += `
+                                <div class="explanation">
+                                    From row-echelon form:<br>
+                                    x + y - 3z = ${Aug[0][3].toFixed(1)}<br>
+                                    ${Aug[1][1].toFixed(1)}y + ${Aug[1][2].toFixed(1)}z = ${Aug[1][3].toFixed(1)}
+                                </div>
+                                <div class="explanation">
+                                    Let z = t (free variable)<br>
+                                    From equation 2: y = ${(-Aug[1][3]/Aug[1][1]).toFixed(1)} - ${(-Aug[1][2]/Aug[1][1]).toFixed(1)}t<br>
+                                    From equation 1: x = ${Aug[0][3].toFixed(1)} - y + 3t
+                                </div>
+                                <div class="solution-box">
+                                    <div class="solution-title">General Solution:</div>
+                                    <div class="solution-equation">x = 1</div>
+                                    <div class="solution-equation">y = 3<span class="param">t</span> - 2</div>
+                                    <div class="solution-equation">z = <span class="param">t</span></div>
+                                    <div style="margin-top: 10px; font-size: 1em;">
+                                        where <span class="param">t</span> ∈ ℝ (any real number)
+                                    </div>
+                                </div>
+                            `;
+                        } else {
+                            stepsHTML += `
+                                <div class="solution-box">
+                                    <div class="solution-title">General Parametric Solution:</div>
+                                    <div class="solution-equation">x = [expression with free variable]</div>
+                                    <div class="solution-equation">y = [expression with free variable]</div>
+                                    <div class="solution-equation">z = [free variable]</div>
+                                </div>
+                            `;
+                        }
+                        
+                        stepsHTML += `</div>`;
+                    }
+                } else {
+                    stepsHTML += `
+                        <div class="step">
+                            <div class="step-title">
+                                <div class="step-number">${stepCounter++}</div>
+                                No Solution
+                            </div>
+                            <div class="explanation" style="background: #f8d7da; border-left-color: #dc3545;">
+                                <strong>INCONSISTENT SYSTEM:</strong><br>
+                                The last equation becomes: 0 = ${Aug[2][3].toFixed(1)} ≠ 0<br>
+                                This contradiction means NO VALUES of x, y, z satisfy all equations.
+                            </div>
+                            <div class="solution-box" style="background: #f8d7da; border-color: #dc3545;">
+                                <div class="solution-title" style="color: #721c24;">No Solution Exists</div>
+                                <div class="solution-equation" style="color: #721c24;">x, y, z = No solution</div>
+                            </div>
+                        </div>
+                    `;
+                }
+                
+                stepsContent.innerHTML = stepsHTML;
+                stepsSection.scrollIntoView({behavior: 'smooth'});
+                
+                return {rankA, rankAB};
+            }
+        });
+    </script>
+</body>
+</html>
